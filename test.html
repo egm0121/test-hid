@@ -23,9 +23,18 @@ select device
 
 
 window.selectDevice = async function() {
-	const device = await navigator.hid.requestDevice({ filters: []})
-  if(device){
-  	document.querySelector("#log").innerHTML = JSON.stringify(device);
+	const deviceList = await navigator.hid.requestDevice({ filters: []})
+  if(deviceList){
+  	document.querySelector("#log").innerHTML = JSON.stringify(deviceList.map(
+          device =>
+            device.collections.map(c => ({
+              productId: device.productId,
+              vendorId: device.vendorId,
+              usage: c.usagePage,
+              inputNbr: c.inputReports.length,
+              outputNbr: c.outputReports.length,
+            })),
+        ));
   } else {
   	document.querySelector("#log").innerHTML = 'no device available';
   }
